@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+    <idinfo>
+        <citation>
+            <citeinfo>
+                <origin/>
+                <pubdate>20250715</pubdate>
+                <pubtime>110400</pubtime>
+                <title>Wildlife Management Units</title>
+                <geoform>vector digital data</geoform>
+            </citeinfo>
+        </citation>
+        <descript>
+            <abstract>Oregon Department of Fish and Wildlife management unit boundaries are published in the Oregon Big Game Hunting Regulations. The mapping was updated in July 2016.</abstract>
+            <purpose>For the purpose of man­ag­ing Or­e­gon’s wildlife, the state has been divided into separate wildlife management units.</purpose>
+        </descript>
+        <status>
+            <progress>Complete</progress>
+            <update>As needed</update>
+        </status>
+        <spdom>
+            <bounding>
+                <westbc>-125.111773</westbc>
+                <eastbc>-116.032092</eastbc>
+                <northbc>46.710414</northbc>
+                <southbc>41.766446</southbc>
+            </bounding>
+        </spdom>
+        <keywords>
+            <theme>
+                <themekt>None</themekt>
+                <themekey>Wildlife</themekey>
+                <themekey>Admin</themekey>
+                <themekey>Management Units</themekey>
+                <themekey>ODFW</themekey>
+            </theme>
+            <theme>
+                <themekt>ISO 19115 Topic Categories</themekt>
+                <themekey>biota</themekey>
+                <themekey>boundaries</themekey>
+            </theme>
+        </keywords>
+        <accconst>None</accconst>
+        <useconst>Boundaries may not be altered without permission of the Oregon Department of Fish and Wildlife. For official legal boundary description see: https://secure.sos.state.or.us/oard/displayDivisionRules.action?selectedDivision=2968</useconst>
+        <ptcontac>
+            <cntinfo>
+                <cntorgp>
+                    <cntorg>ODFW</cntorg>
+                    <cntper>Alexander Vencill</cntper>
+                </cntorgp>
+                <cntpos>Wildlife GIS Analyst</cntpos>
+                <cntaddr>
+                    <addrtype>physical</addrtype>
+                    <city>Salem</city>
+                    <state>OR</state>
+                    <postal>97302</postal>
+                </cntaddr>
+            </cntinfo>
+        </ptcontac>
+        <datacred>Oregon Department of Fish and Wildlife</datacred>
+        <native>Version 6.2 (Build 9200) ; Esri ArcGIS 10.3.1.4959</native>
+    </idinfo>
+    <spdoinfo>
+        <direct>Vector</direct>
+        <ptvctinf>
+            <sdtsterm>
+                <sdtstype>Complete chain</sdtstype>
+                <ptvctcnt>69</ptvctcnt>
+            </sdtsterm>
+        </ptvctinf>
+    </spdoinfo>
+    <eainfo>
+        <detailed>
+            <enttyp>
+                <enttypl>wildlife_game_gdb.GIS.wmunit</enttypl>
+                <enttypd>Wildlife Management units</enttypd>
+                <enttypds>Oregon Big Game Regulations</enttypds>
+            </enttyp>
+            <attr>
+                <attrlabl>UNIT_NUM</attrlabl>
+                <attrdef>Numerical identifier of management unit</attrdef>
+                <attrdefs>Oregon Big Game Regulations</attrdefs>
+            </attr>
+            <attr>
+                <attrlabl>UNIT_NAME</attrlabl>
+                <attrdef>Name of management unit</attrdef>
+                <attrdefs>Oregon Big Game Regulations</attrdefs>
+            </attr>
+            <attr>
+                <attrlabl>REGION</attrlabl>
+            </attr>
+            <attr>
+                <attrlabl>Acres</attrlabl>
+            </attr>
+            <attr>
+                <attrlabl>LandTypeID</attrlabl>
+            </attr>
+            <attr>
+                <attrlabl>LandID</attrlabl>
+            </attr>
+            <attr>
+                <attrlabl>X</attrlabl>
+            </attr>
+            <attr>
+                <attrlabl>Y</attrlabl>
+            </attr>
+            <attr>
+                <attrlabl>FeatureID</attrlabl>
+            </attr>
+        </detailed>
+    </eainfo>
+    <distinfo>
+        <distrib>
+            <cntinfo>
+                <cntorgp>
+                    <cntorg>Oregon Department Of Fish and Wildlife</cntorg>
+                    <cntper>David Quillin</cntper>
+                </cntorgp>
+                <cntpos>GIS Coordinator</cntpos>
+                <cntaddr>
+                    <addrtype>physical</addrtype>
+                    <city>Salem</city>
+                    <state>OR</state>
+                    <postal>97302</postal>
+                </cntaddr>
+            </cntinfo>
+        </distrib>
+        <distliab>See access and use constraints information.</distliab>
+    </distinfo>
+    <metainfo>
+        <metd>20250708</metd>
+        <metc>
+            <cntinfo>
+                <cntorgp>
+                    <cntorg>ODFW</cntorg>
+                    <cntper>David Quillin</cntper>
+                </cntorgp>
+                <cntpos>Wildlife GIS Analyst</cntpos>
+                <cntaddr>
+                    <addrtype>physical</addrtype>
+                    <address>alexander.x.vencill@odfw.oregon.gov</address>
+                    <city>Salem</city>
+                    <state>OR</state>
+                    <postal>97302</postal>
+                </cntaddr>
+            </cntinfo>
+        </metc>
+        <metstdn>FGDC Content Standard for Digital Geospatial Metadata</metstdn>
+        <metstdv>FGDC-STD-001-1998</metstdv>
+        <mettc>local time</mettc>
+    </metainfo>
+</metadata>
