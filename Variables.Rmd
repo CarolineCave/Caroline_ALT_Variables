@@ -121,34 +121,6 @@ shp2 <- shp2 %>%
 ```
 
 
-```{r planning regions - need to ask eval = FALSE }
-###CT planning regions
-
-#Identify the region per county
-#https://geodata.ct.gov/datasets/ctmaps::ct-planning-regions-1/about
-#CTreg https://data.ct.gov/w/8k4w-vrag/wqz6-rhce?cur=OwaGpCkVELK 
-
-
-CTshp <- read_sf("folder/CT_Planning_Regions.shp")#change by the folder and file of use
-
-#plot(CTshp)
-
-CTreg_sel <- CTshp %>% dplyr::select(PlanningRe)
-
-shpCTreg <- st_transform(shp2, st_crs(CTshp))
-
-CTregshp <- st_join(shpCTreg, CTreg_sel, join = st_within)%>%
-  dplyr::select(NAME_1, states_2code_letter, NAME_2,PlanningRe)%>%
-  dplyr::filter(!is.na(PlanningRe))
-  
-
-Regions_values <- CTregshp$PlanningRe
-
-
-
-
-```
-
 #Variables
 Here is the main variables used.
 First is the access to the files. Then included a data cleaniing in case the names are different between datasets. Then, follows the filters and rearrengment of the data according with the needs, specially in cvs files. Finally the estimation or extraction needed (e.g. means, distances, extraction of raster data, etc.). Last steps is join dataset to the file of interest taking into account the order of join. 
@@ -222,19 +194,6 @@ shp2$dist_roads_m <- as.numeric(min_dist)#added to the final database
 ```
 
 
-```{r Roads (just I-95 - emailed Zulma to ask why) eval = FALSE}
-#dist roads I-95
-
-roads3_1<- st_transform(roads3, 4326)
-
-dist_matrix <- st_distance(shp2, roads3_1)#calculate euclidian distance 
-
-min_dist <- apply(dist_matrix, 1, min)#take minimal distance 
-
-shp2$dist_roads_i95 <- as.numeric(min_dist)#added to the final database
-```
-
-
 ```{r Prism Temp and Prec - complete}
 
 
@@ -271,7 +230,7 @@ shp2$Precipitation <- precvalue[,2]#added to the final database
 ```
 
 
-```{r LandCover - complete}
+```{r LandCover - complete eval = FALSE}
 #### Landcover
 #https://www.cec.org/north-american-environmental-atlas/land-cover-30m-2020/ 
 
@@ -338,47 +297,6 @@ deervalue <- st_join(shpdeersel, deer_sel, join = st_within)
 per_values <- deervalue$Per
 
 shp2$Deer_density <- deervalue$Per#added to the final database
-```
-
-
-```{r Livestock - Incomplete eval = FALSE}
-##### livestock
-#https://quickstats.nass.usda.gov/src/glossary.pdf 
-
-livestock0<- read_csv("DATA/usa_land_cover_2020v2_30m_tif/USA_NALCMS_landcover_2020v2_30m/data/USA_NALCMS_landcover_2020v2_30m.tif")#change by the folder and file of use
-
-#data cleaning
-livestock0$Value <- livestock0$Value %>%
-  gsub(",", "", .) %>%        # quitar comas
-  gsub("\\(D\\)", NA, .) %>%  # reemplazar "(D)" por NA
-  as.numeric()                 # convertir a número
-
-livestock0$State <- str_to_title(livestock0$State)
-livestock0$County <- str_to_title(livestock0$County)
-
-
-livestock1<-livestock0%>%
-  dplyr::filter(
-    sapply(State, function(x)
-      any(stringdist(str_to_title(x), str_to_title(states_complete)) < 5)
-    )
-  )%>%
-  dplyr::select(Year, State,County, Value)
-
-#reorganize database
-LivestockYear <- livestock1 %>%
-  mutate(across(where(is.numeric), ~replace_na(., 0)))
-
-#estimate means - Only using one year
-
-
-shp2 <- shp2 %>%#added to the final database 
-  left_join(
-    LivestockYear %>%
-      dplyr::select(State, County, total_cattle=Value),
-    by = c("state_name" = "State",
-           "COUNTY_NAM" = "County")
-  )
 ```
 
 
@@ -552,52 +470,4 @@ shp2 <- shp2 %>%#added to the final database
            "states_2code_letter" = "ST_ABBR")
   )
 ```
-
-
-  )
-```{r Join the planning region for CT eval = FALSE}
-social1 <- social1 %>%
-  mutate(
-    COUNTY = ifelse(
-      ST_ABBR == "CT",
-      sub("^Capitol", "Capital", COUNTY),
-      COUNTY
-    )
-  )
-#Join the planning region for CT
-social1_fixed <- social1 %>%
-  mutate(
-    key6 = ifelse(ST_ABBR == "CT", substr(COUNTY, 1, 6), NA)
-  ) %>%
-  left_join(
-    CTregshp %>%
-      mutate(key6 = substr(PlanningRe, 1, 6)) %>%
-      dplyr::select(key6, NAME_2),
-    by = "key6"
-  ) %>%
-  mutate(
-    COUNTY = ifelse(ST_ABBR == "CT" & !is.na(NAME_2), NAME_2, COUNTY)
-  ) %>%
-  dplyr::select(-key6, -NAME_2)%>%
-  dplyr::select(ST_ABBR, COUNTY, RPL_THEMES)
-
-
-social1_fixed <- social1_fixed %>%
-  mutate(
-    COUNTY = str_to_upper(str_trim(COUNTY)),
-    ST_ABBR = str_to_upper(str_trim(ST_ABBR))
-  )
-
-
-shp2 <- shp2 %>%#added to the final database 
-  left_join(
-    social1_fixed,
-    by = c("states_2code_letter" = "ST_ABBR",
-           "NAME_2_upper" = "COUNTY")
-  )
-
-
-
-```
-
 
