@@ -1,0 +1,577 @@
+---
+title: "Variables"
+output: html_document
+date: "2026-06-15"
+---
+#Packages
+Pacman load or open the packages that are needed for data and spatial management
+
+```{r}
+
+# DATA PACKAGES
+require(pacman)
+pacman::p_load(dplyr, renv, readxl, tidyverse, pivottabler, stringr, purrr, reshape2, ggplot2, ggnewscale, viridis, pheatmap, hrbrthemes, gridExtra, ggpubr, scales,  purrr, GGally, stringdist,lubridate, ggpattern)
+
+
+#MAPS PACKAGES
+pacman::p_load(sf, sp, broom, dplyr, raster, tmap,  maps, boot,  gtools, ggmap, geosphere, stringr, foreign, ggspatial, mapproj, automap, leaflet, rgbif, terra, magrittr, stars,  spatialEco, geodist, exactextractr)
+
+
+
+```
+
+#codes for filter
+Here are the list of names for filter by state, using 2 code letters or complete names. Also, landcover categories
+
+```{r}
+
+
+states_2code_letter <- c(
+  "NY",
+  "NJ",
+  "WV",
+  "VA",
+  "MD",
+  "DC",
+  "PA",
+  "NC",
+  "DE",
+  "CT",
+  "RI"
+)
+
+states_complete <- c(
+  "New York",
+  "New Jersey",
+  "West Virginia",
+  "Virginia",
+  "Maryland",
+  "Washington DC",
+  "Pennsylvania",
+  "North Carolina",
+  "Delaware",
+  "Connecticut",
+  "Rhode Island"
+)
+
+state_lookup <- as.data.frame(cbind(states_2code_letter,states_complete))
+
+
+landcover_labels <- c(
+  "0" = "No data",
+  "1" = "Open water",
+  "5" = "Evergreen forest",
+  "6" = "Mixed forest",
+  "8" = "Grassland",
+  "10" = "Grassland2",
+  "14" = "Wetlands",
+  "15" = "Pasture/Agriculture",
+  "16" = "Woody wetlands",
+  "17" = "Urban",
+  "18" = "Herbaceous wetlands"
+)
+
+
+#(The following list describes the display of land cover classification in the .tif file:
+#> Value 1, Temperate or sub-polar needleleaf forest, RGB 0 61 0;
+#> Value 2, Sub-polar taiga needleleaf forest, RGB 148 156 112;
+#> Value 3, Tropical or sub-tropical broadleaf evergreen forest, RGB 0 99 0;
+#> Value 4, Tropical or sub-tropical broadleaf deciduous forest, RGB 30 171 5;
+#> Value 5, Temperate or sub-polar broadleaf deciduous forest, RGB 20 140 61;
+#> Value 6, Mixed Forest, RGB 92 117 43;
+#> Value 7, Tropical or sub-tropical shrubland, RGB 179 158 43;
+#> Value 8, Temperate or sub-polar shrubland, RGB 179 138 51;
+#> Value 9, Tropical or sub-tropical grassland, RGB 232 220 94;
+#> Value 10, Temperate or sub-polar grassland, RGB 225 207 138;
+#> Value 11, Sub-polar or polar shrubland-lichen-moss, RGB 156 117 84;
+#> Value 12, Sub-polar or polar grassland-lichen-moss, RGB 186 212 143;
+#> Value 13, Sub-polar or polar barren-lichen-moss, RGB 64 138 112;
+#> Value 14, Wetland, RGB 107 163 138;
+#> Value 15, Cropland, RGB 230 174 102;
+#> Value 16, Barren lands, RGB 168 171 174;
+#> Value 17, Urban, RGB 220 33 38;
+#> Value 18, Water, RGB 76 112 163;
+#> Value 19, Snow and Ice, RGB 255 250 255)
+
+
+```
+
+#Administrative shapefiles
+Here are the main shapefile used for mapping.
+It is made an initial filter for especific states
+
+```{r}
+#### States
+
+shpStates <- read_sf("folder/USA_adm1.shp")#change by the folder and file of use
+
+shpStates1 <- shpStates %>%
+  dplyr::filter(NAME_1 %in% states_complete)
+
+shpStates0<- st_transform(shpStates1, 5070)
+
+####Counties
+
+
+shp <- read_sf("folder/USA.shp")#change by the folder and file of use
+
+shp1 <- shp %>%
+  dplyr::filter(NAME_1 %in% states_complete)
+
+crs(shp)
+
+##Filtrate and made centroids per county
+shp2 <- shp %>%
+  dplyr::filter(NAME_1 %in% states_complete)%>%
+  st_point_on_surface() %>%   #centroides
+  mutate(
+    lon = st_coordinates(.)[,1],
+    lat = st_coordinates(.)[,2]
+  )
+
+shp2 <- shp2 %>%
+  left_join(state_lookup, by=c("NAME_1" = "states_complete"))%>%
+  mutate(
+    NAME_2_upper = str_to_upper(NAME_2),                # counties in capital letters
+    #estados_2code_upper = str_to_upper(states_2code_letter)  #states in capital letters
+  )
+
+shp_0 <- st_transform(shp1, 5070)
+
+###CT planning regions
+
+#Identify the region per county
+#https://geodata.ct.gov/datasets/ctmaps::ct-planning-regions-1/about
+#CTreg https://data.ct.gov/w/8k4w-vrag/wqz6-rhce?cur=OwaGpCkVELK 
+
+
+CTshp <- read_sf("folder/CT_Planning_Regions.shp")#change by the folder and file of use
+
+#plot(CTshp)
+
+CTreg_sel <- CTshp %>% dplyr::select(PlanningRe)
+
+shpCTreg <- st_transform(shp2, st_crs(CTshp))
+
+CTregshp <- st_join(shpCTreg, CTreg_sel, join = st_within)%>%
+  dplyr::select(NAME_1, states_2code_letter, NAME_2,PlanningRe)%>%
+  dplyr::filter(!is.na(PlanningRe))
+  
+
+Regions_values <- CTregshp$PlanningRe
+
+
+
+
+```
+
+#Variables
+Here is the main variables used.
+First is the access to the files. Then included a data cleaniing in case the names are different between datasets. Then, follows the filters and rearrengment of the data according with the needs, specially in cvs files. Finally the estimation or extraction needed (e.g. means, distances, extraction of raster data, etc.). Last steps is join dataset to the file of interest taking into account the order of join. 
+
+```{r}
+#### markets
+#https://www.aphis.usda.gov/livestock-poultry-disease/traceability/approved-livestock-markets  
+
+markets<- read_excel("folder/OverviewMap.xlsx")#change by the folder and file of use
+
+markets1 <- markets %>%
+  dplyr::filter(`Prem State...15` %in% states_2code_letter)
+#NOT IN MARKET DATASET  #DC #CT #RI
+
+#filter by coordinates
+markets1_clean <- markets1 |>
+  dplyr::filter(
+    !is.na(`Longitud (generado)`),
+    !is.na(`Latitud (generado)`)
+  )
+
+markets1_sf <- st_as_sf(
+  markets1_clean,
+  coords = c("Longitud (generado)", "Latitud (generado)"),
+  crs = 4326   # WGS84
+)
+
+markets1_proj<- st_transform(markets1_sf, 5070)
+
+
+# distance to the markets
+dist_matrix <- st_distance(shp2, markets1_sf)#calculate euclidian distance 
+
+min_dist <- apply(dist_matrix, 1, min)#take minimal distance 
+
+
+shp2$dist_markets_m <- as.numeric(min_dist)#added to the final database 
+
+
+# number markets per county
+shp2$n_markets <- lengths(st_intersects(shp1, markets1_sf))
+
+
+##### Roads
+#https://catalog.data.gov/dataset/tiger-line-shapefile-2016-nation-u-s-primary-roads-national-shapefile 
+
+#We selected and filter specific roads 
+roads1 <- st_read("folder/I77.shp")#change by the folder and file of use
+roads2 <- st_read("folder/I81.shp")#change by the folder and file of use
+roads3 <- st_read("folder/I95.shp")#change by the folder and file of use
+
+
+roads_all <- rbind(roads1, roads2, roads3)
+roads_all <- st_make_valid(roads_all)
+
+roads_all_1<- st_transform(roads_all, 4326)
+
+
+roads_all_proj<- st_transform(roads_all, 5070)
+roads_clip <- st_intersection(roads_all_proj, shp_0)
+
+
+#distance to the roads
+dist_matrix <- st_distance(shp2, roads_all_1)#calculate euclidian distance 
+
+min_dist <- apply(dist_matrix, 1, min)#take minimal distance 
+
+shp2$dist_roads_m <- as.numeric(min_dist)#added to the final database 
+
+
+
+#dist roads I-95
+roads3_1<- st_transform(roads3, 4326)
+
+dist_matrix <- st_distance(shp2, roads3_1)#calculate euclidian distance 
+
+min_dist <- apply(dist_matrix, 1, min)#take minimal distance 
+
+shp2$dist_roads_i95 <- as.numeric(min_dist)#added to the final database 
+
+
+
+##### Worldclim
+
+# Temp
+temp<- rast("folder/wc2.1_2.5m_bio_1.tif")#change by the folder and file of use
+
+temp_crop <- crop(temp, shpStates1)
+
+temp_mask <- terra::mask(temp_crop, shpStates1)
+
+#plot(temp_mask)
+
+Tempvalue <- terra::extract(temp_mask, shp2)
+
+shp2$Temperature <- Tempvalue[,2]#added to the final database 
+
+
+# Precipitation
+prec<- rast("folder/wc2.1_2.5m_bio_12.tif")#change by the folder and file of use
+
+prec_crop <- crop(prec, shpStates1)
+
+prec_mask <- terra::mask(prec_crop, shpStates1)
+
+#plot(prec_mask)
+
+precvalue <- terra::extract(prec_mask, shp2)
+
+shp2$Precipitation <- precvalue[,2]#added to the final database 
+
+
+
+#### Landcover
+#https://www.cec.org/north-american-environmental-atlas/land-cover-30m-2020/ 
+
+land<- rast("folder/USA_NALCMS_landcover_2020v2_30m.tif")#change by the folder and file of use
+
+centroids_proj <- st_transform(shp2, crs(land))
+
+#plot(land)
+
+landvalue <- terra::extract(land, centroids_proj)
+shp2$Landcover <- landvalue[,2]#added to the final database 
+
+
+shp2$Landcover_group <- dplyr::case_when(
+  shp2$Landcover %in% c(1,2,3,4,5,6) ~ "Forest",
+  shp2$Landcover %in% c(7,8,9,10,11, 12, 13,14,16, 18, 19) ~ "Non_Forested",#shrubland, grassland
+  shp2$Landcover %in% c(15,17) ~ "Developed",
+  TRUE ~ "No_data"
+)
+
+
+
+##### Deer
+
+#https://peerj.com/articles/8262/#supplemental-information
+
+deer<- st_read("folder/QDMA_2001_2005.shp")#change by the folder and file of use
+
+shpStates2 <- st_transform(shpStates1, st_crs(deer))
+
+deer_crop <- st_intersection(deer, shpStates2)
+
+#plot(deer_crop)
+
+deer_sel <- deer_crop %>% dplyr::select(Per)
+
+shpdeersel <- st_transform(shp2, st_crs(deer_sel))
+
+deervalue <- st_join(shpdeersel, deer_sel, join = st_within)
+per_values <- deervalue$Per
+
+shp2$Deer_density <- deervalue$Per#added to the final database 
+
+
+
+##### livestock
+#https://quickstats.nass.usda.gov/src/glossary.pdf 
+
+livestock0<- read_csv("folder/CensusCattle_NASSstatequicks_2017_2022.csv")#change by the folder and file of use
+
+#data cleaning
+livestock0$Value <- livestock0$Value %>%
+  gsub(",", "", .) %>%        # quitar comas
+  gsub("\\(D\\)", NA, .) %>%  # reemplazar "(D)" por NA
+  as.numeric()                 # convertir a número
+
+livestock0$State <- str_to_title(livestock0$State)
+livestock0$County <- str_to_title(livestock0$County)
+
+
+livestock1<-livestock0%>%
+  dplyr::filter(
+    sapply(State, function(x)
+      any(stringdist(str_to_title(x), str_to_title(states_complete)) < 5)
+    )
+  )%>%
+  dplyr::select(Year, State,County, Value)
+
+#reorganize database
+LivestockYear <- livestock1 %>%
+  pivot_wider(
+    names_from = Year,
+    values_from = Value)%>%
+  mutate(across(where(is.numeric), ~replace_na(., 0)))
+
+#estimate means
+
+LivestockYear$Cattle_mean<- LivestockYear$`2022` + LivestockYear$`2017`/ 2
+
+shp2 <- shp2 %>%#added to the final database 
+  left_join(
+    LivestockYear %>%
+      dplyr::select(State, County, `2017`, `2022`, Cattle_mean),
+    by = c("NAME_1" = "State",
+           "NAME_2" = "County")
+  )
+
+
+##### beef
+#https://quickstats.nass.usda.gov/src/glossary.pdf 
+
+beef<- read_csv("folder/CensusBeef_NASSstatequicks_2017_2022.csv")#change by the folder and file of use
+
+#data cleaning
+beef0<-beef%>%
+  dplyr::filter(Domain== "TOTAL",)
+
+beef0$Value <- beef0$Value %>%
+  gsub(",", "", .) %>%        # remove comma
+  gsub("\\(D\\)", NA, .) %>%  # replace "(D)" by NA
+  as.numeric()                 # change to number
+
+beef0$State <- str_to_title(beef0$State)
+beef0$County <- str_to_title(beef0$County)
+
+
+beef1<-beef0%>%
+  dplyr::filter(
+    sapply(State, function(x)
+      any(stringdist(str_to_title(x), str_to_title(states_complete)) < 5)
+    )
+  )%>%mutate(County = str_to_title(County))%>%
+  dplyr::select(Year, State,County, Value)%>%
+    mutate(Value = replace(Value, !is.finite(Value), 0))
+  
+
+#reorganize database
+beefYear <- beef1 %>%
+  pivot_wider(
+    names_from = Year,
+    values_from = Value)%>%
+  mutate(across(where(is.numeric), ~replace_na(., 0)))
+
+
+#estimate means
+beefYear$Beef_mean<- beefYear$`2022` + beefYear$`2017`/ 2
+
+shp2 <- shp2 %>%#added to the final database 
+  left_join(
+    beefYear %>%
+      dplyr::select(State, County, Beef_mean),
+    by = c("NAME_1" = "State",
+           "NAME_2" = "County")
+  )
+
+
+##### dairy
+#https://quickstats.nass.usda.gov/src/glossary.pdf 
+
+dairy0<- read_csv("folder/CensusMilk_NASSstatequicks_2017_2022.csv")#change by the folder and file of use
+
+#data cleaning
+dairy0$Value <- dairy0$Value %>%
+  gsub(",", "", .) %>%        
+  gsub("\\(D\\)", NA, .) %>%  
+  as.numeric()                
+
+dairy0$State <- str_to_title(dairy0$State)
+dairy0$County <- str_to_title(dairy0$County)
+
+
+dairy1<-dairy0%>%
+  dplyr::filter(
+    sapply(State, function(x)
+      any(stringdist(str_to_title(x), str_to_title(states_complete)) < 5)
+    )
+  )%>%
+  dplyr::select(Year, State,County, Value)%>%
+    mutate(Value = replace(Value, !is.finite(Value), 0))
+
+#reorganize database
+dairyYear <- dairy1 %>%
+  pivot_wider(
+    names_from = Year,
+    values_from = Value)%>%
+  mutate(across(where(is.numeric), ~replace_na(., 0)))
+
+
+#estimate means
+dairyYear$Dairy_mean<- dairyYear$`2022` + dairyYear$`2017`/ 2
+
+shp2 <- shp2 %>%#added to the final database 
+  left_join(
+    dairyYear %>%
+      dplyr::select(State, County, Dairy_mean),
+    by = c("NAME_1" = "State",
+           "NAME_2" = "County")
+  )
+
+
+
+##### humans
+#https://www.ers.usda.gov/data-products/rural-urban-continuum-codes 
+
+humans<- read_xlsx("folder/Ruralurbancontinuumcodes2023.xlsx")#change by the folder and file of use
+
+#data cleaning
+humans1 <- humans %>%
+  filter(State %in% states_2code_letter) %>%
+  mutate(
+    County = str_remove(County_Name, " County"))%>%
+  dplyr::select(State, County, Population_2020)
+  
+
+humans1 <- humans1 %>%
+  mutate(
+    COUNTY = ifelse(
+      State == "CT",
+      sub("^Capitol", "Capital", County),
+      County
+    )
+  )
+
+#Join the planning region for CT
+humans1_fixed <- humans1 %>%
+  mutate(
+    key6 = ifelse(State == "CT", substr(COUNTY, 1, 6), NA)
+  ) %>%
+  left_join(
+    CTregshp %>%
+      mutate(key6 = substr(PlanningRe, 1, 6)) %>%
+      dplyr::select(key6, NAME_2),
+    by = "key6"
+  ) %>%
+  mutate(
+    COUNTY = ifelse(State == "CT" & !is.na(NAME_2), NAME_2, COUNTY)
+  ) %>%
+  dplyr::select(-key6, -NAME_2)%>%
+  dplyr::select(State, COUNTY, Population_2020)
+
+
+humans1_fixed <- humans1_fixed %>%
+  mutate(
+    COUNTY = str_to_upper(str_trim(COUNTY)),
+    State = str_to_upper(str_trim(State))
+  )
+
+shp2 <- shp2 %>%#added to the final database 
+  left_join(
+    humans1_fixed,
+    by = c("states_2code_letter" = "State",
+           "NAME_2_upper" = "COUNTY")
+  )
+
+
+
+##### social index
+#https://www.atsdr.cdc.gov/place-health/php/svi/svi-interactive-map.html
+
+
+social<- read_csv("folder/svi_interactive_map.csv")#change by the folder and file of use
+
+#data cleaning
+social1 <- social %>%
+  dplyr::filter(ST_ABBR %in% states_2code_letter) %>%
+  dplyr::select(ST_ABBR, COUNTY, RPL_THEMES)%>%
+  mutate(
+    COUNTY = str_remove(COUNTY, " County"))
+
+
+social1 <- social1 %>%
+  mutate(
+    COUNTY = ifelse(
+      ST_ABBR == "CT",
+      sub("^Capitol", "Capital", COUNTY),
+      COUNTY
+    )
+  )
+
+#Join the planning region for CT
+social1_fixed <- social1 %>%
+  mutate(
+    key6 = ifelse(ST_ABBR == "CT", substr(COUNTY, 1, 6), NA)
+  ) %>%
+  left_join(
+    CTregshp %>%
+      mutate(key6 = substr(PlanningRe, 1, 6)) %>%
+      dplyr::select(key6, NAME_2),
+    by = "key6"
+  ) %>%
+  mutate(
+    COUNTY = ifelse(ST_ABBR == "CT" & !is.na(NAME_2), NAME_2, COUNTY)
+  ) %>%
+  dplyr::select(-key6, -NAME_2)%>%
+  dplyr::select(ST_ABBR, COUNTY, RPL_THEMES)
+
+
+social1_fixed <- social1_fixed %>%
+  mutate(
+    COUNTY = str_to_upper(str_trim(COUNTY)),
+    ST_ABBR = str_to_upper(str_trim(ST_ABBR))
+  )
+
+
+shp2 <- shp2 %>%#added to the final database 
+  left_join(
+    social1_fixed,
+    by = c("states_2code_letter" = "ST_ABBR",
+           "NAME_2_upper" = "COUNTY")
+  )
+
+
+
+```
+
+
+

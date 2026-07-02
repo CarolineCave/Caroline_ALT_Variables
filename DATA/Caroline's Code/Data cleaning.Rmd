@@ -1,0 +1,306 @@
+---
+title: "Data cleaning"
+output: html_document
+date: "2026-06-15"
+---
+
+#Packages
+```{r}
+
+# DATA PACKAGES
+require(pacman)
+pacman::p_load(dplyr, renv, readxl, tidyverse, pivottabler, stringr, purrr, reshape2, ggplot2, ggnewscale, viridis, pheatmap, hrbrthemes, gridExtra, ggpubr, scales,  purrr, GGally, stringdist,lubridate, ggpattern)
+
+
+#MAPS PACKAGES
+pacman::p_load(sf, sp, broom, dplyr, raster, tmap,  maps, boot,  gtools, ggmap, geosphere, stringr, foreign, ggspatial, mapproj, automap, leaflet, rgbif, terra, magrittr, stars,  spatialEco, geodist, exactextractr)
+
+
+
+```
+
+
+#DB cleaning
+```{r}
+
+
+DO<- read_excel("folder/master_longicornis_USDA1.xlsx")
+
+# Reasure column of date is Date
+DO$Collected <- as.Date(DO$Collected)
+
+
+DO <- DO %>%
+  mutate(
+    year = year(Collected),
+    semester = ifelse(month(Collected) <= 6, "Jan–Jun", "Jul–Dec"),
+    semester_label = paste0(year, " ", semester)
+  )
+
+DO1<-DO
+
+DO1 <- DO1 %>%
+  dplyr::mutate(ID = row_number())%>%
+  dplyr::select(ID, State, County, Collected, semester_label, stage, No, host)
+
+
+
+
+```
+
+```{r}
+
+#YEAR
+
+DO1$Year <- as.numeric(format(DO$Collected, "%Y"))
+
+```
+
+```{r}
+
+#SOURCES
+
+DO1$Source<-NA
+
+DO1 <- DO1 %>%
+  # 1. Assign "Environment"
+  mutate(Source = case_when(
+    is.na(Source) & str_detect(`host`, regex(
+      "Environment",
+      ignore_case = TRUE
+    )) ~ "Environment",
+    TRUE ~ Source
+  )) %>%
+   # 2. Assign "Human"
+  mutate(Source = case_when(
+    is.na(Source) & str_detect(`host`, regex(
+      "Human",
+      ignore_case = TRUE
+    )) ~ "Human",
+    TRUE ~ Source
+  )) %>%
+  # 3.Assign "Domestic"
+  mutate(Source = case_when(
+    is.na(Source) & str_detect(`host`, regex(
+      "cat|chicken|Cow|Dog|Goat|Pig|Horse|Sheep",
+      ignore_case = TRUE
+    )) ~ "Domestic",
+    TRUE ~ Source
+  )) %>%
+ 
+  # 4. Assign "Wildlife"
+  mutate(Source = case_when(
+    is.na(Source) & str_detect(`host`, regex(
+      "deer|eagle|owl|bear|Jay|Booby|goose|wren|coyote|chipmunk|rabbit|elk|catbird|Fox|Squirrel|Groundhog|Cardinal|Peromyscus|Raccoon|Hawk|Takin|Sparrow|Skunk|Opossum",
+      ignore_case = TRUE
+    )) ~ "Wildlife",
+    TRUE ~ Source
+  )) %>%
+  # 5. assign "Undetermined" to NAs
+  mutate(Source = if_else(is.na(Source), "Undetermined", Source))
+
+
+#TickObtention
+DO1$Tick_Obtention<-NA
+
+DO1 <- DO1 %>%
+  # 1. Assign "Host_seeking"
+  mutate(Tick_Obtention = case_when(
+    is.na(Tick_Obtention) & str_detect(`Source`, regex(
+      "Environment",
+      ignore_case = TRUE
+    )) ~ "Host_seeking",
+    TRUE ~ Tick_Obtention
+  )) %>%
+     # 2. Assign "Host_derived"
+  mutate(Tick_Obtention = case_when(
+    is.na(Tick_Obtention) & str_detect(`Source`, regex(
+      "Human|Wildlife|Domestic",
+      ignore_case = TRUE
+    )) ~ "Host_derived",
+    TRUE ~ Tick_Obtention
+    ))
+
+```
+
+```{r}
+
+#STAGES
+
+
+DO1 <- DO1 %>%
+  mutate(
+    # all in tiny letters
+    stage = str_to_lower(stage),
+    )
+
+DO1$stage[493] <- str_replace(DO1$stage[493], "\\.(?!,)", ", ")
+
+
+DO1$No <- DO1$No %>%
+  as.character() %>%
+  gsub("\\.", ",", .)  %>%         # replace dots with commas
+gsub("[A-Za-z]", "", .)    # remove all letters
+
+DO1$Total_Stages<-DO1$stage
+
+
+```
+
+```{r}
+
+df_sep <- DO1 %>%
+  mutate(
+    stage_list = str_split(stage, ",\\s*"),
+    N_list = str_split(No, ",\\s*")
+  ) %>%
+  mutate(
+    # convert each list into a tibble with a 1-to-1 correspondence
+    data = map2(stage_list, N_list, ~{
+      stage <- str_trim(.x)
+      Ns <- as.numeric(.y)
+      
+      # ensure that if there are more stages than numbers, N is padded with zeros
+      if(length(stage) > length(Ns)) Ns <- c(Ns, rep(0, length(stage) - length(Ns)))
+      
+      tibble(stage = stage, No = Ns)
+    })
+  ) %>%
+  dplyr::select(-stage, -No, -stage_list, -N_list) %>%
+  unnest(data)
+
+
+# Important step: ensure that N is a numeric vector (not a list).
+df_sep <- df_sep %>%
+  mutate(across(everything(), unlist))
+
+
+
+df_sep <- df_sep %>%
+  mutate(stage = case_when(
+    stage %in% c("female")       ~ "females",
+    stage %in% c("male")         ~ "males",
+    stage %in% c("larva")        ~ "larvae",
+    stage %in% c("nymph", "nymph.") ~ "nymphs",
+    stage %in% c("adult")        ~ "adults",
+    TRUE ~ stage  # leave the other values as they are
+
+  ))
+
+
+
+```
+
+```{r}
+options(scipen = 999)  #penalizes scientific notation
+
+# Pivot to wide format with NA
+df_wide <- df_sep %>%
+  pivot_wider(
+    id_cols = ID,
+    names_from = stage,
+    values_from = No)%>%
+  mutate(across(where(is.numeric), ~replace_na(., 0)))
+
+
+df_wide <- df_sep %>%
+  mutate(No = ifelse(No == "" | is.na(No), 0, No)) %>%     # converts blanks or NAs to 0
+  mutate(No = as.numeric(No)) %>%                        
+  pivot_wider(
+    id_cols = ID,
+    names_from = stage,
+    values_from = No,
+    values_fill = 0                                    # fill with 0
+  )
+
+df_wide$Adults<-df_wide$females+df_wide$males+df_wide$adults
+df_wide$Undetermined<-df_wide$unknown+df_wide$`NA`
+
+
+```
+
+#FINAL DataBase
+```{r}
+
+DBfinal<-DO1%>%
+  dplyr::select(ID, State, County, Year, semester_label, Tick_Obtention, Source, host, Total_Stages, No)%>%
+  left_join(df_wide %>% dplyr::select(ID, nymphs, larvae, Adults, females, Undetermined), by = "ID")
+
+DBfinal$Abundance<-DBfinal$nymphs + DBfinal$larvae + DBfinal$Adults + DBfinal$Undetermined
+
+DBfinal$Count<-1
+
+
+DBfinal1<-DBfinal#%>%
+  #dplyr::filter(Year >= 2017)
+
+
+
+DBfinal_states<-DBfinal1%>%
+  dplyr::filter(State %in% states_complete)
+
+
+
+#New States
+
+DBfinal_states <- DBfinal_states %>%
+  arrange(Year) %>%
+  group_by(State) %>%
+  dplyr::mutate(NewState = ifelse(row_number() == 1, 1, 0)) %>%
+  ungroup()
+
+
+DBfinal_states
+
+
+
+```
+
+#COUNTIES DF
+```{r}
+#####df counties ####
+
+Counties<-DBfinal_states%>%
+  dplyr::select(Year, semester_label, State, County, Tick_Obtention, Source, Count, Abundance)
+
+Counties$LogAbundance<-log1p(Counties$Abundance)
+
+
+CountiesE<-Counties%>%
+  filter(Tick_Obtention == "Host_seeking")
+
+CountiesH<-Counties%>%
+  filter(Tick_Obtention == "Host_derived")
+
+
+
+AbundE <- CountiesE[CountiesE$Year >= 2017, ]  %>%
+  group_by(State, Year)%>%
+  dplyr::summarize(Total = sum(Abundance))
+
+AbundH <- CountiesH[CountiesH$Year >= 2017, ]  %>%
+  group_by(State, Year)%>%
+  dplyr::summarize(Total = sum(Abundance))
+
+
+
+
+ggplot(data = AbundE, aes(x=Year, y=Total, fill= State))+
+ geom_bar(position="stack", stat="identity")+
+    scale_x_continuous(breaks = sort(unique(AbundE$Year))) +
+  theme_classic()+
+ labs(y="Total abundance", x="")+
+ theme(text = element_text(size=16),
+           #axis.text.x = element_text(angle = 75, vjust = 0.5)
+)
+
+ggplot(data = AbundH, aes(x=Year, y=Total, fill= State))+
+ geom_bar(position="stack", stat="identity")+
+    scale_x_continuous(breaks = sort(unique(AbundH$Year))) +
+  theme_classic()+
+ labs(y="Total abundance", x="")+
+ theme(text = element_text(size=16),
+           #axis.text.x = element_text(angle = 75, vjust = 0.5)
+)
+
+```

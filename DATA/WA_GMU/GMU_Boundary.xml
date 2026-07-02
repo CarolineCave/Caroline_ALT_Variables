@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+    <idinfo>
+        <citation>
+            <citeinfo>
+                <pubdate>20210416</pubdate>
+                <title>Game Management Unit Boundaries for Washington State for the 2026-2027 Hunting Season - GMU_Boundary</title>
+                <edition>1.0</edition>
+                <geoform>vector digital data</geoform>
+            </citeinfo>
+        </citation>
+        <descript>
+            <abstract>These are the Game Management Unit boundaries of Washington state. These boundaries are used to determine areas where the rules and regulations that are presented in the 'Washington's Big Game Hunting Seasons and Regulations' pamphlet will take effect. </abstract>
+            <purpose>The function of this feature class is to aid Washington Department of Fish and Wildlife staff and the general public to geospatially interpret the Game Management Unit legal descriptions as presented in the "Big Game Hunting Seasons and Regulations" pamphlet and the Washington Administrative Code; Section 220-401-010 to 220-401-060.</purpose>
+        </descript>
+        <timeperd>
+            <timeinfo>
+                <rngdates>
+                    <begdate>20210401</begdate>
+                    <enddate>20220331</enddate>
+                </rngdates>
+            </timeinfo>
+            <current>The 2021-2022 Hunting Season for the state of Washington.</current>
+        </timeperd>
+        <status>
+            <progress>Complete</progress>
+            <update>Annually</update>
+        </status>
+        <spdom>
+            <bounding>
+                <westbc>-124.926764</westbc>
+                <eastbc>-116.708446</eastbc>
+                <northbc>49.050084</northbc>
+                <southbc>45.481143</southbc>
+            </bounding>
+        </spdom>
+        <keywords>
+            <theme>
+                <themekt>None</themekt>
+                <themekey>Hunting</themekey>
+            </theme>
+            <theme>
+                <themekt>None</themekt>
+                <themekey>Boundary</themekey>
+            </theme>
+            <theme>
+                <themekt>ISO 19115 Topic Categories</themekt>
+                <themekey>biota</themekey>
+            </theme>
+            <theme>
+                <themekt>None</themekt>
+                <themekey>Game Management Unit</themekey>
+            </theme>
+            <theme>
+                <themekt>None</themekt>
+                <themekey>Wildlife</themekey>
+            </theme>
+            <place>
+                <placekt>None</placekt>
+                <placekey>Washington State</placekey>
+            </place>
+            <temporal>
+                <tempkt>None</tempkt>
+                <tempkey>2021-2022 Hunting Season</tempkey>
+            </temporal>
+        </keywords>
+        <accconst>Access Constraints: None</accconst>
+        <useconst>The data set was created at a 1:100,000. Zooming in to scales finer then 1:100,000 may produce inconsistancies with the actual ground feature being represented. The line segment attribute will say what the ground feature is being represented. The feature class was created based on the "Washington's Big Game Hunting Seasons and Regulations" pamphlet. If any difference is found between the legal description for the Game Management Unit in the Pamphlet and what is represented in the feature class, the legal description language takes precedence.</useconst>
+        <ptcontac>
+            <cntinfo>
+                <cntorgp>
+                    <cntorg>WA State Department of Fish and Wildlife</cntorg>
+                    <cntper>Sierra Dymond-Smith</cntper>
+                </cntorgp>
+                <cntpos>Data Steward</cntpos>
+                <cntaddr>
+                    <addrtype>physical</addrtype>
+                    <address>1111 Washington St SE</address>
+                    <city>Olympia</city>
+                    <state>WA</state>
+                    <postal>98502</postal>
+                    <country>US</country>
+                </cntaddr>
+                <cntvoice>360-902-2515</cntvoice>
+                <cntemail>wildthing@dfw.wa.gov</cntemail>
+            </cntinfo>
+        </ptcontac>
+        <datacred>Washington Department of Fish and Wildlife, Wildlife Program, Science Division, Spatial Data Management Unit</datacred>
+        <secinfo>
+            <secsys>None</secsys>
+            <secclass>Unclassified</secclass>
+            <sechandl>None</sechandl>
+        </secinfo>
+        <native>ESRI ArcGIS 10.6.1</native>
+    </idinfo>
+    <spdoinfo>
+        <direct>Vector</direct>
+        <ptvctinf>
+            <sdtsterm>
+                <sdtstype>String</sdtstype>
+                <ptvctcnt>1688</ptvctcnt>
+            </sdtsterm>
+        </ptvctinf>
+    </spdoinfo>
+    <eainfo>
+        <detailed>
+            <enttyp>
+                <enttypl>GMU_Boundary</enttypl>
+                <enttypd>Game Management Unit boundaries in Washington state.</enttypd>
+                <enttypds>Legal Descriptions in the "Washington's Big Game Hunting Seasons and Regulations" Pamphlet</enttypds>
+            </enttyp>
+            <attr>
+                <attrlabl>Leg_Code</attrlabl>
+                <attrdef>Number Assigned to each Leg that defines what type of land form, water body, or artifical object the arc is supposed to represent. (This code has been abandoned).</attrdef>
+                <attrdefs>WDFW staff</attrdefs>
+                <attrmfrq>011</attrmfrq>
+            </attr>
+            <attr>
+                <attrlabl>Leg_Name</attrlabl>
+                <attrdef>The name of the feature being used as a boundary for the Game Management Unit</attrdef>
+                <attrdefs>Washington's Big Game Hunting Seasons and Regulations" Pamphlet and Washington Administrative Code (Section 220-401-010 to 220-401-060</attrdefs>
+                <attrdomv>
+                                        
+                    <udom>Each line segment represents a real world feature described in the Game Management Unit legal descriptions which are listed in the "Washington's Big Game Hunting Seasons and Regulations" pamphlet.</udom>
+                                    
+                </attrdomv>
+                <attrmfrq>008</attrmfrq>
+            </attr>
+            <attr>
+                <attrlabl>Shape</attrlabl>
+                <attrdef>Feature geometry.</attrdef>
+                <attrdefs>ESRI</attrdefs>
+                <attrdomv>
+                                        
+                    <udom>Coordinates defining the features.</udom>
+                                    
+                </attrdomv>
+                <attrmfrq>008</attrmfrq>
+            </attr>
+            <attr>
+                <attrlabl>In_Effect_Desc</attrlabl>
+                <attrdef>The Time Period for which the boundaries are legal as determined in Washington Department of Fish and Wildlife's "Washington's Big Game Hunting Seasons and Regulations" pamphlet</attrdef>
+                <attrdefs>Legal Descriptions in the "Washington's Big Game Hunting Seasons and Regulations" Pamphlet</attrdefs>
+                <attrdomv>
+                                        
+                    <edom>
+                                                
+                        <edomv>April 1 2017 to March 31, 2018</edomv>
+                                                
+                        <edomvd>This is the time period for which the regulations listed in WAC Washington Administrative Code (Section 232-28-331 tp 232-28-336) and the "Washington's 2015 Big Game Hunting Seasons and Regulations" pamphlet are valid</edomvd>
+                                                
+                        <edomvds>WDFW Staff</edomvds>
+                                            
+                    </edom>
+                                    
+                </attrdomv>
+                <attrdomv>
+                                        
+                    <edom>
+                                                
+                        <edomv>Not Applicable</edomv>
+                                                
+                        <edomvd>This value indicates that the boundary being represented is not part of a boundary for a Game Management Unit</edomvd>
+                                                
+                        <edomvds>WDFW Staff</edomvds>
+                                            
+                    </edom>
+                                    
+                </attrdomv>
+                <attrmfrq>008</attrmfrq>
+            </attr>
+            <attr>
+                <attrlabl>Generl_Ind</attrlabl>
+                <attrdef>This leg is coincident with a boundary of the GMU_Generalized Feature Class which follows a looser interpretation of the Game Management Legal Descriptions in the "Washington's Big Game Hunting Seasons and Regulations" pamphlet which are used to contruct GMU_Generalized. The difference is water features are excluded from the legal descriptions</attrdef>
+                <attrdefs>Legal Descriptions in the "Washington's Big Game Hunting Seasons and Regulations" Pamphlet</attrdefs>
+                <attrdomv>
+                                        
+                    <edom>
+                                                
+                        <edomv>0</edomv>
+                                                
+                        <edomvd>Arc Segment is not coincident with the GMU_Generalized</edomvd>
+                                                
+                        <edomvds>Legal Descriptions in the "Washington's Big Game Hunting Seasons and Regulations" Pamphlet</edomvds>
+                                            
+                    </edom>
+                                    
+                </attrdomv>
+                <attrdomv>
+                                        
+                    <edom>
+                                                
+                        <edomv>1</edomv>
+                                                
+                        <edomvd>Arc Segment is coincident with the GMU_Generalized</edomvd>
+                                                
+                        <edomvds>Legal Descriptions in the "Washington's Big Game Hunting Seasons and Regulations" Pamphlet</edomvds>
+                                            
+                    </edom>
+                                    
+                </attrdomv>
+                <attrmfrq>008</attrmfrq>
+            </attr>
+            <attr>
+                <attrlabl>OBJECTID</attrlabl>
+                <attrdef>Internal feature number.</attrdef>
+                <attrdefs>ESRI</attrdefs>
+                <attrdomv>
+                                        
+                    <udom>Sequential unique whole numbers that are automatically generated.</udom>
+                                    
+                </attrdomv>
+                <attrmfrq>008</attrmfrq>
+            </attr>
+            <attr>
+                <attrlabl>Shore_Ind</attrlabl>
+                <attrdef>Arc Segments represent coastal or Columbia River shoreline.</attrdef>
+                <attrdefs>WDFW's Hydro layer str100 or DNR's wbhydro or wchydro</attrdefs>
+                <attrdomv>
+                                        
+                    <edom>
+                                                
+                        <edomv>1</edomv>
+                                                
+                        <edomvd>Arc Segment is a shoreline segment</edomvd>
+                                                
+                        <edomvds>WDFW's Hydro layer str100 or DNR's wbhydro or wchydro</edomvds>
+                                            
+                    </edom>
+                                    
+                </attrdomv>
+                <attrdomv>
+                                        
+                    <edom>
+                                                
+                        <edomv>0</edomv>
+                                                
+                        <edomvd>Arc Segment is not a shoreline segment</edomvd>
+                                                
+                        <edomvds>WDFW's Hydro layer str100 or DNR's wbhydro or wchydro</edomvds>
+                                            
+                    </edom>
+                                    
+                </attrdomv>
+                <attrmfrq>008</attrmfrq>
+            </attr>
+            <attr>
+                <attrlabl>Legal_Ind</attrlabl>
+                <attrdef>This leg is coincident with a boundary of the GMU_Legal Feature Class which follows a strict interpretation of the Game Management Legal Descriptions in the "Washington's Big Game Hunting Seasons and Regulations" pamphlet which are used to contruct GMU_Legal.</attrdef>
+                <attrdefs>Legal Descriptions in the "Washington's Big Game Hunting Seasons and Regulations" Pamphlet</attrdefs>
+                <attrdomv>
+                                        
+                    <edom>
+                                                
+                        <edomv>0</edomv>
+                                                
+                        <edomvd>Arc Segment is not coincident of the GMU_Legal</edomvd>
+                                                
+                        <edomvds>Legal Descriptions in the "Washington's Big Game Hunting Seasons and Regulations" Pamphlet</edomvds>
+                                            
+                    </edom>
+                                    
+                </attrdomv>
+                <attrdomv>
+                                        
+                    <edom>
+                                                
+                        <edomv>1</edomv>
+                                                
+                        <edomvd>Arc Segment is coincident of the GMU_Legal</edomvd>
+                                                
+                        <edomvds>Legal Descriptions in the "Washington's Big Game Hunting Seasons and Regulations" Pamphlet</edomvds>
+                                            
+                    </edom>
+                                    
+                </attrdomv>
+                <attrmfrq>008</attrmfrq>
+            </attr>
+            <attr>
+                <attrlabl>LegB_Name</attrlabl>
+                <attrdef>Alternate names referring to the feature labeled in Leg_Name</attrdef>
+                <attrdefs>Legal Descriptions in the "Washington's Big Game Hunting Seasons and Regulations" Pamphlet, Washington Administrative Code (Section 220-401-010 to 220-401-060),  and other sources</attrdefs>
+                <attrdomv>
+                                        
+                    <udom>Each line segment represents the real world feature described in the in the Game Management Unit legal descriptions which are listed in the "Washington's Big Game Hunting Seasons and Regulations" pamphlet. Other sources used to identify alternate names are DNR 100k Maps, Bing Hybrid maps, Delorme Washington Atlas, and individual county road atlases.</udom>
+                                    
+                </attrdomv>
+                <attrmfrq>008</attrmfrq>
+            </attr>
+            <attr>
+                <attrlabl>Shape.STLength()</attrlabl>
+            </attr>
+        </detailed>
+        <overview>
+            <eaover>This linear feature class is intended to show the Game Managment Areas as strictly interpreted in the Washington Administrative Code, Section 220-401-010 to Section 220-401-060 (WAC). 
+The purpose of the attributes is as follows- 
+Leg_Name - The name of the feature represented by line segment which is identified in the WAC legal description. 
+LegB_Name - The alternative name for the feature that this line segment is identified as in the WAC legal description. 
+Leg_Code - This numeric code was intended to represent the phsical type of feature that the leg represented. This code has been abandoned. 
+Legal_Ind - This code indicates whether the leg is a part of the boundary for GMU_Legal. It is used to select the bounding arcs that will be used to create GMU_Legal. 
+Generl_Ind - This code indicates whether the leg is a part of the boundary for GMU_Generalized. It is used to select the bounding arcs that will be used to create GMU_Generalized. 
+Shore_Ind - This code indicates whether the arc represents a shoreline; either marine coastal or Columbia River. 
+In_Effect_Desc - Time period these data is legal according to the "Washington's Big Game Hunting Seasons and Regulations" pamphlet.</eaover>
+            <eadetcit>Washington Administrative Code, Section 220-401-010 to Section 220-401-060 (WAC) and the 'Washington's Big Game Huinting Seasons and Regulations' Pamphlet.</eadetcit>
+        </overview>
+    </eainfo>
+    <distinfo>
+        <distrib>
+            <cntinfo>
+                <cntorgp>
+                    <cntorg>WA State Department of Fish and Wildlife</cntorg>
+                    <cntper>Sierra Dymond-Smith</cntper>
+                </cntorgp>
+                <cntpos>Data Steward</cntpos>
+                <cntaddr>
+                    <addrtype>physical</addrtype>
+                    <address>1111 Washington St SE</address>
+                    <city>Olympia</city>
+                    <state>WA</state>
+                    <postal>98502</postal>
+                    <country>US</country>
+                </cntaddr>
+                <cntvoice>360-902-2515</cntvoice>
+                <cntemail>wildthing@dfw.wa.gov</cntemail>
+            </cntinfo>
+        </distrib>
+        <resdesc>Zip File containing GMU_Generalized, GMU)Legal,and GMU_Boundary</resdesc>
+        <distliab>The data set was created at a 1:100,000. Zooming in to scales finer then 1:100,000 may produce inconsistancies with the actual ground feature being represented. The line segment attribute will say what the ground feature is being represented. The feature was created based on the "Washington's Big Game Hunting Seasons and Regulations" pamphlet. If any difference is found between the legal description for the Game Management Unit in the Pamphlet and what is represented in the feature class, the legal description language takes precedence.</distliab>
+        <stdorder>
+            <digform>
+                <digtopt>
+                    <onlinopt>
+                        <computer>
+                            <networka>
+                                <networkr>http://geography.wa.gov/GeospatialPortal/index.shtml</networkr>
+                            </networka>
+                        </computer>
+                        <accinstr>Zip File containing GMU_Generalized, GMU)Legal,and GMU_Boundary</accinstr>
+                    </onlinopt>
+                </digtopt>
+            </digform>
+            <fees>None</fees>
+            <ordering>Download the Zipped SHP files for DFW "Game Management Units - General Statewide Hunting Season" from the Washingon State Geospatial Portal at http://geography.wa.gov/GeospatialPortal/dataDownload.shtml. Other Hunt Unit boundaries are on this site also.</ordering>
+        </stdorder>
+        <availabl>
+            <timeinfo>
+                <sngdate>
+                    <caldate>20210401</caldate>
+                </sngdate>
+            </timeinfo>
+        </availabl>
+    </distinfo>
+    <distinfo>
+        <distliab>The data set was created at a 1:100,000. Zooming in to scales finer then 1:100,000 may produce inconsistancies with the actual ground feature being represented. The line segment attribute will say what the ground feature is being represented. The feature was created based on the "Washington's Big Game Hunting Seasons and Regulations" pamphlet. If any difference is found between the legal description for the Game Management Unit in the Pamphlet and what is represented in the feature class, the legal description language takes precedence.</distliab>
+        <stdorder>
+            <fees>None</fees>
+            <ordering>Standard Ordering Instructions: Contact the Washington State Department of Fish and Wildlife's Wildlife Management Program Customer service desk by one of the contact methods listed in this document (by telephone, fax, email, or regular mail) giving your name, phone number and email address. After the contact information is received, a compressed zip file containing SHP files of Special Hunting boundaries that the Washington Department of Fish and Wildlife manages; Game Management Units, Elk Area, and Deer Area, (Moose Unit/Hunt Area, Bighorn Sheep Unit, or Mountain Goat Hunt Area boundaries are provided on request) will then be shipped electronically to the email address. If you do not wish the information shipped by email than a mailing address will be needed. The information, which is in a compressed zip file format, will be shipped by compact disc to the address. Estimated turnaround time is between one to four weeks, depending on Wildlife Management workload.; Technical Prerequisites: The feature class was developed in ARCGIS 10.2.2 and may not be readable by earlier versions of ARCGIS.</ordering>
+            <turnarnd>Between one to four weeks upon reception of the name, telephone number, and email address of the recipient.</turnarnd>
+        </stdorder>
+        <availabl>
+            <timeinfo>
+                <sngdate>
+                    <caldate>20170421</caldate>
+                </sngdate>
+            </timeinfo>
+        </availabl>
+    </distinfo>
+    <metainfo>
+        <metd>20260224</metd>
+        <metfrd>20220401</metfrd>
+        <metc>
+            <cntinfo>
+                <cntorgp>
+                    <cntorg>WA State Department of Fish and Wildlife</cntorg>
+                    <cntper>Sierra Dymond-Smith</cntper>
+                </cntorgp>
+                <cntpos>Data Steward</cntpos>
+                <cntaddr>
+                    <addrtype>physical</addrtype>
+                    <address>1111 Washington St SE</address>
+                    <city>Olympia</city>
+                    <state>WA</state>
+                    <postal>98502</postal>
+                    <country>US</country>
+                </cntaddr>
+                <cntvoice>360-902-2515</cntvoice>
+                <cntemail>wildthing@dfw.wa.gov</cntemail>
+            </cntinfo>
+        </metc>
+        <metstdn>FGDC Content Standard for Digital Geospatial Metadata</metstdn>
+        <metstdv>FGDC-STD-001-1998</metstdv>
+        <mettc>local time</mettc>
+        <metac>The Washington Department of Fish and Wildlife (WDFW) makes no guarantee concerning the data's content, accuracy, completeness, or the results obtained from the queries or use of these data. WDFW makes no warranty of fitness for a particular purpose, no representation as the quality of any data, ands assumes no liability fore the data represented here. These data do not represent exhaustive inventories, but are compilations of existing knowledge from WDFW staff that are updated periodically as knowledge improves. This data should be used cautiously because they are not exhaustive, and are subject to change. When conducting projects or planning for fish or wildlife, please consider using additional information gathered from other spatial sources and consultations with WDFW staff.</metac>
+        <metuc>The data set was created at a 1:100,000. Zooming in to scales finer then 1:100,000 may produce inconsistancies with the actual ground feature being represented. The line segment attribute will say what the ground feature is being represented. The feature class was created based on the "Washington's Big Game Hunting Seasons and Regulations" pamphlet. If any difference is found between the legal description for the Game Management Unit in the Pamphlet and what is represented in the feature class, the legal description language takes precedence.</metuc>
+        <metsi>
+            <metscs>None</metscs>
+            <metsc>Unclassified</metsc>
+            <metshd>None</metshd>
+        </metsi>
+    </metainfo>
+</metadata>
